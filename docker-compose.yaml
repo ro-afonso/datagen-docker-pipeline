@@ -1,0 +1,65 @@
+version: '3'
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: mosquitto-cont 
+    command: ["mosquitto", "-c", "/mosquitto-no-auth.conf"]
+  datagenerator:
+    image: data-gen-iscflab3
+    container_name: data-generator-cont
+    env_file:
+      - ./env_vars_iscflab3.env
+  datagenerator2:
+    image: data-gen-iscflab3
+    container_name: data-generator-cont2
+    env_file:
+      - ./env_vars_iscflab3.env
+    environment:
+      - TOPIC=data_generator2
+  nodered:
+    image: nodered/node-red
+    container_name: node-red-cont
+    ports:
+      - "1880:1880"
+    volumes:
+      - node-red-data:/data
+  influxdb:
+    image: influxdb
+    container_name: influxdb-cont
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb-config:/etc/influxdb.conf
+      - influxdb-data:/var/lib/influxdb2
+    command: influxd run --bolt-path /var/lib/influxdb2/influxd.bolt --engine-path /var/lib/influxdb2/engine --store bolt
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=my-user
+      - DOCKER_INFLUXDB_INIT_PASSWORD=my-password
+      - DOCKER_INFLUXDB_INIT_ORG=my-org
+      - DOCKER_INFLUXDB_INIT_BUCKET=my-bucket
+      - DOCKER_INFLUXDB_INIT_RETENTION=1h
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=wa9i6dFv0qgftvQhZnmGdphOOQn8QSeHK1zhICu2FHp4RorEHx1xwJOCiTg5xYe61DF2y5Kao3KNV85Dr6ORKw==
+  grafana:
+    image: grafana/grafana
+    container_name: grafana-cont
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+  mongodb:
+    image: mongo
+    container_name: mongodb-cont
+    volumes:
+      - mongodb-data:/data/db
+
+volumes:
+  node-red-data:
+  influxdb-data:
+  influxdb-config:
+  grafana-data:
+  mongodb-data:
+  mongodb-config:

@@ -1,0 +1,521 @@
+[
+    {
+        "id": "f6f2187d.f17ca8",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "ee00399e5f76e4cc",
+        "type": "mqtt in",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "topic": "data_generator",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "20b08e394a04f030",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 100,
+        "wires": [
+            [
+                "51d1daf2c282abfc"
+            ]
+        ]
+    },
+    {
+        "id": "e01307979b858e40",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 390,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "711998b93e520e25",
+        "type": "Stackhero-InfluxDB-v2-write",
+        "z": "f6f2187d.f17ca8",
+        "server": "14c93c847dc264b7",
+        "name": "influxdb",
+        "x": 800,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "968e58cc257ade55",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "func": "msg.payload = {\n  \n  data: [\n    {\n      measurement: 'dataGenerator',\n\n      fields: {\n        data: Number(msg.payload)\n      },\n\n    },\n\n    // More data can be send here, simply re add an object\n    // { ... },\n  ]\n};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 140,
+        "wires": [
+            [
+                "711998b93e520e25",
+                "ee41f82967ccf33f"
+            ]
+        ]
+    },
+    {
+        "id": "51d1daf2c282abfc",
+        "type": "switch",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "empty"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 390,
+        "y": 100,
+        "wires": [
+            [
+                "3ca60803a0126672"
+            ],
+            [
+                "e01307979b858e40",
+                "968e58cc257ade55",
+                "8d23c45eecc80f33"
+            ]
+        ]
+    },
+    {
+        "id": "3ca60803a0126672",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "func": "msg.payload = {\n  \n  data: [\n    {\n      measurement: 'dataGenerator',\n\n      fields: {\n        fail: 1\n      },\n\n    },\n\n    // More data can be send here, simply re add an object\n    // { ... },\n  ]\n};\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 20,
+        "wires": [
+            [
+                "51a5411123303a41",
+                "41f5b62ad4fc7080"
+            ]
+        ]
+    },
+    {
+        "id": "51a5411123303a41",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 810,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "4467eac1c6df30d3",
+        "type": "mongodb out",
+        "z": "f6f2187d.f17ca8",
+        "mongodb": "68786375c33d6d48",
+        "name": "",
+        "collection": "user",
+        "payonly": true,
+        "upsert": false,
+        "multi": false,
+        "operation": "store",
+        "x": 830,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "8d23c45eecc80f33",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "func": "msg.payload = {\n    data: Number(msg.payload), \n    timestamp: Date.now()\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 200,
+        "wires": [
+            [
+                "4467eac1c6df30d3"
+            ]
+        ]
+    },
+    {
+        "id": "324d62a806efa12b",
+        "type": "mongodb in",
+        "z": "f6f2187d.f17ca8",
+        "mongodb": "68786375c33d6d48",
+        "name": "",
+        "collection": "user",
+        "operation": "count",
+        "x": 530,
+        "y": 580,
+        "wires": [
+            [
+                "eed4120f4c8393da"
+            ]
+        ]
+    },
+    {
+        "id": "0b76bcfda5ec21d2",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 280,
+        "y": 580,
+        "wires": [
+            [
+                "324d62a806efa12b"
+            ]
+        ]
+    },
+    {
+        "id": "eed4120f4c8393da",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 810,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "fb058cbb7bd4a668",
+        "type": "mqtt in",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "topic": "data_generator2",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "20b08e394a04f030",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 360,
+        "wires": [
+            [
+                "610ea4df8bbdda85"
+            ]
+        ]
+    },
+    {
+        "id": "610ea4df8bbdda85",
+        "type": "switch",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "empty"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 390,
+        "y": 360,
+        "wires": [
+            [
+                "7c68a5086fdc637c"
+            ],
+            [
+                "ce2c6b327bcaf295",
+                "f02cb82f0c3ec866",
+                "4de46b4259485b69"
+            ]
+        ]
+    },
+    {
+        "id": "7c68a5086fdc637c",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "func": "msg.payload = {\n  \n  data: [\n    {\n      measurement: 'dataGenerator2',\n\n      fields: {\n        fail: 1\n      },\n\n    },\n\n    // More data can be send here, simply re add an object\n    // { ... },\n  ]\n};\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 300,
+        "wires": [
+            [
+                "40d938b3aa1bfc1b",
+                "b7e9249ecd942265"
+            ]
+        ]
+    },
+    {
+        "id": "40d938b3aa1bfc1b",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 830,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "ce2c6b327bcaf295",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 390,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "f02cb82f0c3ec866",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "func": "msg.payload = {\n    data2: Number(msg.payload), \n    timestamp: Date.now()\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 520,
+        "wires": [
+            [
+                "5aedb8baa1c0e435"
+            ]
+        ]
+    },
+    {
+        "id": "5aedb8baa1c0e435",
+        "type": "mongodb out",
+        "z": "f6f2187d.f17ca8",
+        "mongodb": "68786375c33d6d48",
+        "name": "",
+        "collection": "user",
+        "payonly": true,
+        "upsert": false,
+        "multi": false,
+        "operation": "store",
+        "x": 830,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "4de46b4259485b69",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "func": "msg.payload = {\n  \n  data: [\n    {\n      measurement: 'dataGenerator2',\n\n      fields: {\n        data: Number(msg.payload)\n      },\n\n    },\n\n    // More data can be send here, simply re add an object\n    // { ... },\n  ]\n};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 460,
+        "wires": [
+            [
+                "75c277f335d7f27f",
+                "830185aee1bfeae2"
+            ]
+        ]
+    },
+    {
+        "id": "75c277f335d7f27f",
+        "type": "Stackhero-InfluxDB-v2-write",
+        "z": "f6f2187d.f17ca8",
+        "server": "14c93c847dc264b7",
+        "name": "influxdb",
+        "x": 820,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "41f5b62ad4fc7080",
+        "type": "Stackhero-InfluxDB-v2-write",
+        "z": "f6f2187d.f17ca8",
+        "server": "14c93c847dc264b7",
+        "name": "influxdb",
+        "x": 800,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b7e9249ecd942265",
+        "type": "Stackhero-InfluxDB-v2-write",
+        "z": "f6f2187d.f17ca8",
+        "server": "14c93c847dc264b7",
+        "name": "influxdb",
+        "x": 820,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ee41f82967ccf33f",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "func": "msg.payload = {\n  \n  data: [\n    {\n      measurement: 'dataGenerator',\n\n      fields: {\n        fail: 0\n      },\n\n    },\n\n    // More data can be send here, simply re add an object\n    // { ... },\n  ]\n};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 80,
+        "wires": [
+            [
+                "41f5b62ad4fc7080"
+            ]
+        ]
+    },
+    {
+        "id": "830185aee1bfeae2",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "func": "msg.payload = {\n  \n  data: [\n    {\n      measurement: 'dataGenerator2',\n\n      fields: {\n        fail: 0\n      },\n\n    },\n\n    // More data can be send here, simply re add an object\n    // { ... },\n  ]\n};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 380,
+        "wires": [
+            [
+                "b7e9249ecd942265"
+            ]
+        ]
+    },
+    {
+        "id": "20b08e394a04f030",
+        "type": "mqtt-broker",
+        "name": "mqtt",
+        "broker": "mosquitto-cont",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "14c93c847dc264b7",
+        "type": "Stackhero-InfluxDB-v2-Server",
+        "name": "",
+        "host": "influxdb-cont",
+        "port": "8086",
+        "tls": false
+    },
+    {
+        "id": "68786375c33d6d48",
+        "type": "mongodb",
+        "hostname": "mongodb-cont",
+        "topology": "direct",
+        "connectOptions": "",
+        "port": "27017",
+        "db": "mymongo",
+        "name": ""
+    }
+]
