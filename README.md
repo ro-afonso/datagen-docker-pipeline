@@ -9,8 +9,8 @@ The infrastructure of the developed system is illustrated below:
 
 The following video demonstrates the setup and deployment steps of the system, showcasing its features and functionality:
 
-https://github.com/ro-afonso/datagen-docker-pipeline/assets/93609933/8b1a9673-4405-4258-b698-94e777bf9da4
+https://github.com/user-attachments/assets/200dc68c-896a-41d7-87d9-d9ce91c7d0b4
 
 ## Requirements
-* Docker Desktop: https://www.docker.com/products/docker-desktop
-* VS Code or other code editors
+* [Docker Desktop](https://www.docker.com/products/docker-desktop)
+* [VS Code](https://code.visualstudio.com/) or other code editors
